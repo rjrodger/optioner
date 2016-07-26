@@ -1,0 +1,32 @@
+{
+  "name": "optioner",
+  "version": "0.1.0",
+  "description": "Process and validate options for your module.",
+  "main": "optioner.js",
+  "scripts": {
+    "test": "lab -P test -v -t 100 -r console"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rjrodger/optioner.git"
+  },
+  "keywords": [
+    "options",
+    "optioner",
+    "validate",
+    "merge"
+  ],
+  "author": "Richard Rodger richardrodger.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rjrodger/optioner/issues"
+  },
+  "homepage": "https://github.com/rjrodger/optioner",
+  "dependencies": {
+    "joi": "9.0.4"
+  },
+  "devDependencies": {
+    "code": "^2.1.0",
+    "lab": "^8.2.0"
+  }
+}

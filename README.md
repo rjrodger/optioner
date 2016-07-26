@@ -1,2 +1,20 @@
 # optioner
-Process and validate options for your module.
+
+
+## Quick Example
+
+
+```js
+var Optioner = require('optioner')
+```
+
+## Questions?
+
+[@rjrodger](https://twitter.com/rjrodger)
+[![Gitter][gitter-badge]][gitter-url]
+
+
+
+
+
+

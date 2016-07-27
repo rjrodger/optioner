@@ -1,6 +1,6 @@
 {
   "name": "optioner",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Process and validate options for your module.",
   "main": "optioner.js",
   "scripts": {
@@ -33,5 +33,10 @@
     "eslint-plugin-standard": "1.x.x",
     "eslint-config-seneca": "1.1.2",
     "lab": "10.9.0"
-  }
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "optioner.js"
+  ]
 }

@@ -91,7 +91,7 @@ function walk (joi, obj, path, ctxt, mod) {
 
 
 function inject (path, val, obj) {
-  var root = obj
+  var top = obj
 
   if (null == obj) return obj
 
@@ -106,13 +106,13 @@ function inject (path, val, obj) {
   }
 
   if ('' === pp[i]) {
-    root = val
+    top = val
   }
   else {
     obj[pp[i]] = val
   }
 
-  return root
+  return top
 }
 
 

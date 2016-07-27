@@ -40,6 +40,17 @@ describe('optioner', function () {
   })
 
 
+  it('empty', function (done) {
+    var opter = Optioner({a: 1})
+
+    opter(null, function (err, out) {
+      if (err) return done(err)
+      expect(out).to.deep.equal({a: 1})
+      done()
+    })
+  })
+
+
   it('array', function (done) {
     var opter = Optioner([
       1, Joi.string().default('a')

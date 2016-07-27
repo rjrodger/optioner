@@ -25,7 +25,7 @@ function make_optioner (spec) {
   var schema = Joi.compile(joispec)
 
   return function optioner (input, done) {
-    var work = Hoek.clone(input)
+    var work = Hoek.clone(input) || {}
 
     // converts arrays to objects so that validation can be performed on a
     // per-element basis

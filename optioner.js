@@ -14,60 +14,31 @@ var Hoek = require('hoek')
 module.exports = function (spec) {
   return make_optioner(spec)
 }
+module.exports.inject = inject
+module.exports.arr2obj = arr2obj
+module.exports.obj2arr = obj2arr
 
 
 function make_optioner (spec) {
   var ctxt = {arrpaths: []}
   var joispec = prepare_spec(spec, ctxt)
-  //console.log('J', require('util').inspect(joispec,{depth:null}))
-
   var schema = Joi.compile(joispec)
 
   return function optioner (input, done) {
     var work = Hoek.clone(input)
-    for( var apI = 0; apI < ctxt.arrpaths.length; ++apI ) {
-      var ap = ctxt.arrpaths[apI]
-      var arr = Hoek.reach(work,ap)
-      console.log('WA',ap,arr)
+    work = arr2obj(work, ctxt)
 
-      if(Util.isArray(arr)) {
-        var obj = {}
-        for( var i = 0; i < arr.length; ++i) {
-          obj[i]=arr[i]
-        }
-        work[ap] = obj
-      }
-    }
-    Joi.validate(input, schema, function (err, out) {
-      if (err) return done(err)
-
-      console.log('RO',out)
-
-      for( var apI = 0; apI < ctxt.arrpaths.length; ++apI ) {
-        var ap = ctxt.arrpaths[apI]
-        var obj = Hoek.reach(out,ap)
-        var arr = []
-        for( var p in obj ) {
-          var i = parseInt(p)
-          if( !isNaN(i) && 0 <= i ) {
-            arr[i] = obj[p]
-          }
-        }
-        console.log('OA',ap,arr)
-        out[ap] = arr
-      }
-      
-      done(null,out)
+    Joi.validate(work, schema, function (err, out) {
+      done(err, obj2arr(out, ctxt))
     })
   }
 }
 
 
-function prepare_spec (spec,ctxt) {
+function prepare_spec (spec, ctxt) {
   var joi = walk(
-    //Util.isArray(spec) ? Joi.array() : 
-    Joi.object(), 
-    spec, 
+    Joi.object(),
+    spec,
     '',
     ctxt,
     function (valspec) {
@@ -84,22 +55,19 @@ function prepare_spec (spec,ctxt) {
 
 
 function walk (joi, obj, path, ctxt, mod) {
-  console.log('P',path)
+  if (Util.isArray(obj)) {
+    ctxt.arrpaths.push(path)
+  }
 
   for (var p in obj) {
     var v = obj[p]
     var t = typeof v
-    //console.log(p, v, t)
 
     var kv = {}
 
     if (null != v && !v.isJoi && 'object' === t) {
-      var np = '' === path ? p : path+'.'+p
-      if (Util.isArray(v)) {
-        console.log('AP',np)
-        ctxt.arrpaths.push(np)
-      }
-      kv[p] = walk( Joi.object().default(), v, np, ctxt, mod )
+      var np = '' === path ? p : path + '.' + p
+      kv[p] = walk(Joi.object().default(), v, np, ctxt, mod)
     }
     else {
       kv[p] = mod(v)
@@ -109,4 +77,76 @@ function walk (joi, obj, path, ctxt, mod) {
   }
 
   return joi
+}
+
+
+function inject (path, val, obj) {
+  var root = obj
+
+  if (null == obj) return obj
+
+  var pp = ('string' === typeof path ? path : '').split('.')
+
+  for (var i = 0; i < pp.length - 1; ++i) {
+    var n = obj[pp[i]]
+    if (null == n) {
+      n = obj[pp[i]] = isNaN(parseInt(pp[i + 1], 10)) ? {} : []
+    }
+    obj = n
+  }
+
+  if ('' === pp[i]) {
+    root = val
+  }
+  else {
+    obj[pp[i]] = val
+  }
+
+  return root
+}
+
+
+function arr2obj (work, ctxt) {
+  if (null == work) return work
+
+  for (var apI = 0; apI < ctxt.arrpaths.length; ++apI) {
+    var ap = ctxt.arrpaths[apI]
+    var arr = '' === ap ? work : Hoek.reach(work, ap)
+
+    if (Util.isArray(arr)) {
+      var obj = {}
+
+      for (var i = 0; i < arr.length; ++i) {
+        obj[i] = arr[i]
+      }
+
+      work = inject(ap, obj, work)
+    }
+  }
+
+  return work
+}
+
+function obj2arr (work, ctxt) {
+  if (null == work) return work
+
+  for (var apI = 0; apI < ctxt.arrpaths.length; ++apI) {
+    var ap = ctxt.arrpaths[apI]
+    var obj = '' === ap ? work : Hoek.reach(work, ap)
+
+    if (!Util.isArray(obj)) {
+      var arr = []
+
+      for (var p in obj) {
+        var i = parseInt(p, 10)
+        if (!isNaN(i) && 0 <= i) {
+          arr[i] = obj[p]
+        }
+      }
+
+      work = inject(ap, arr, work)
+    }
+  }
+
+  return work
 }

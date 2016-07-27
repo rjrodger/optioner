@@ -64,6 +64,44 @@ describe('optioner', function () {
   })
 
 
+  it('default-types', function (done) {
+    var opter = Optioner({
+      a: 1,
+      b: 1.1,
+      c: 'x',
+      d: true
+    })
+
+    opter({a: 2, b: 2.2, c: 'y', d: false}, function (err, out) {
+      if (err) return done(err)
+      expect(out).to.deep.equal({a: 2, b: 2.2, c: 'y', d: false})
+
+      opter({a: 3.3}, function (err, out) {
+        expect(err.details[0].type).to.equal('number.integer')
+
+        opter({b: 4}, function (err, out) {
+          if (err) return done(err)
+          expect(out).to.deep.equal({a: 1, b: 4, c: 'x', d: true})
+
+          opter({b: 'z'}, function (err, out) {
+            expect(err.details[0].type).to.equal('number.base')
+
+            opter({c: 1}, function (err, out) {
+              expect(err.details[0].type).to.equal('string.base')
+
+              opter({d: 'q'}, function (err, out) {
+                expect(err.details[0].type).to.equal('boolean.base')
+
+                done()
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+
+
   it('inject', function (done) {
     expect(Optioner.inject(null, {x: 1}, {y: 1})).to.deep.equal({x: 1})
     expect(Optioner.inject('', {x: 1}, {y: 1})).to.deep.equal({x: 1})

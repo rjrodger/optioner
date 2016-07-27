@@ -26,6 +26,9 @@ function make_optioner (spec) {
 
   return function optioner (input, done) {
     var work = Hoek.clone(input)
+
+    // converts arrays to objects so that validation can be performed on a
+    // per-element basis
     work = arr2obj(work, ctxt)
 
     Joi.validate(work, schema, function (err, out) {
@@ -45,8 +48,15 @@ function prepare_spec (spec, ctxt) {
       if (valspec && valspec.isJoi) {
         return valspec
       }
-      else {
+      else if (null == valspec) {
         return Joi.default(valspec)
+      }
+      else {
+        var typecheck = typeof valspec
+        if ('number' === typecheck && Hoek.isInteger(valspec)) {
+          return Joi.number().integer().default(valspec)
+        }
+        return Joi[typecheck]().default(valspec)
       }
     })
 

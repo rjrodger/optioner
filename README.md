@@ -56,7 +56,7 @@ optioner({size: 6}, function (err, out) {
 [![Gitter][gitter-badge]][gitter-url]
 
 ## License
-Copyright (c) 2015-2016, Richard Rodger and other contributors.
+Copyright (c) 2016, Richard Rodger and other contributors.
 Licensed under [MIT][].
 
 [MIT]: ./LICENSE
@@ -67,7 +67,7 @@ Licensed under [MIT][].
 [gitter-badge]: https://badges.gitter.im/Join%20Chat.svg
 [gitter-url]: https://gitter.im/rjrodger/seneca
 [github issue]: https://github.com/rjrodger/optioner/issues
-[joi]: https://github/com/hapijs/joi
+[joi]: https://github.com/hapijs/joi
 
 
 

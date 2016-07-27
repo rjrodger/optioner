@@ -1,21 +1,31 @@
 'use strict'
 
 var Optioner = require('..')
+var Joi = require('joi')
 
-const Code = require('code')
-const Lab = require('lab')
+// var Code = require('code')
+var Lab = require('lab')
 
-const lab = exports.lab = Lab.script()
-const describe = lab.describe
-const it = lab.it
-const expect = Code.expect
+var lab = exports.lab = Lab.script()
+var describe = lab.describe
+var it = lab.it
+// var expect = Code.expect
 
 
 describe('optioner', function () {
-
   it('happy', function (done) {
-    var opter = Optioner({})
-    done()
+    var opter = Optioner({
+      a: Joi.number().integer().default(1),
+      b: {c: 2},
+      d: {e: {f: 3}},
+      g: null,
+      h: [Joi.number().integer().default(4)]
+    })
+    opter({b:{c:22}}, function (err, out) {
+      if (err) return done(err)
+      console.log('OUT', out)
+      done()
+    })
   })
 })
 

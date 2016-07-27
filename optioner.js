@@ -20,9 +20,17 @@ module.exports.arr2obj = arr2obj
 module.exports.obj2arr = obj2arr
 
 
-function make_optioner (spec) {
+function make_optioner (spec, options) {
+  options = options || {}
+  options.unknown = null == options.unknown ? true : options.unknown
+
   var ctxt = {arrpaths: []}
   var joispec = prepare_spec(spec, ctxt)
+
+  if (options.unknown) {
+    joispec = joispec.unknown()
+  }
+
   var schema = Joi.compile(joispec)
 
   return function optioner (input, done) {

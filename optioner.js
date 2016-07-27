@@ -14,6 +14,7 @@ var Hoek = require('hoek')
 module.exports = function (spec) {
   return make_optioner(spec)
 }
+module.exports.Joi = Joi
 module.exports.inject = inject
 module.exports.arr2obj = arr2obj
 module.exports.obj2arr = obj2arr

@@ -1,7 +1,6 @@
 'use strict'
 
 var Optioner = require('..')
-var Joi = require('joi')
 
 var Code = require('code')
 var Lab = require('lab')
@@ -11,6 +10,8 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
+
+var Joi = Optioner.Joi
 
 describe('optioner', function () {
   it('happy', function (done) {

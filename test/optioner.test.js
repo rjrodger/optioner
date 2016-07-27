@@ -76,6 +76,40 @@ describe('optioner', function () {
   })
 
 
+  it('function', function (done) {
+    var fx = function (x) { return x + 1 }
+
+    var opter = Optioner({
+      a: fx
+    })
+
+    opter({}, function (err, out) {
+      if (err) return done(err)
+      expect(out.a(1)).to.equal(2)
+
+      opter({a: function (x) { return x + 2 }}, function (err, out) {
+        if (err) return done(err)
+        expect(out.a(1)).to.equal(3)
+
+        done()
+      })
+    })
+  })
+
+
+  it('edge', function (done) {
+    var opter = Optioner({
+      a: undefined
+    })
+
+    opter({}, function (err, out) {
+      if (err) return done(err)
+      expect(out).to.deep.equal({})
+      done()
+    })
+  })
+
+
   it('default-types', function (done) {
     var opter = Optioner({
       a: 1,

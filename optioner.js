@@ -54,10 +54,13 @@ function prepare_spec (spec, ctxt) {
       }
       else {
         var typecheck = typeof valspec
+        typecheck = 'function' === typecheck ? 'func' : typecheck
         if ('number' === typecheck && Hoek.isInteger(valspec)) {
           return Joi.number().integer().default(valspec)
         }
-        return Joi[typecheck]().default(valspec)
+        return Joi[typecheck]
+          ? Joi[typecheck]().default(valspec)
+          : Joi.any().default(valspec, 'value')
       }
     })
 

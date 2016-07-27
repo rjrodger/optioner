@@ -1,10 +1,10 @@
 {
   "name": "optioner",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Process and validate options for your module.",
   "main": "optioner.js",
   "scripts": {
-    "test": "lab -P test -v -t 100 -r console -L"
+    "test": "lab -P test -v -t 95 -r console -L"
   },
   "repository": {
     "type": "git",

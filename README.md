@@ -34,6 +34,15 @@ var optioner = Optioner({
   range: [100, 200]
 })
 
+var promise = optioner({size: 2})
+
+// prints: { color: 'red', size: 2, range: [ 100, 200 ] }
+promise
+  .then(console.log)
+
+// prints: { color: 'red', size: 2, range: [ 100, 200 ] }
+console.log(promise.value)
+
 optioner({}, function (err, out) {
   // prints: { color: 'red', size: 3, range: [ 100, 200 ] }
   console.log(out)

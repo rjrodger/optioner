@@ -10,8 +10,7 @@ var Util = require('util')
 var Joi = require('joi')
 var Hoek = require('hoek')
 
-
-module.exports = function (spec) {
+module.exports = function(spec) {
   return make_optioner(spec)
 }
 module.exports.Joi = Joi
@@ -19,12 +18,11 @@ module.exports.inject = inject
 module.exports.arr2obj = arr2obj
 module.exports.obj2arr = obj2arr
 
-
-function make_optioner (spec, options) {
+function make_optioner(spec, options) {
   options = options || {}
   options.unknown = null == options.unknown ? true : options.unknown
 
-  var ctxt = {arrpaths: []}
+  var ctxt = { arrpaths: [] }
   var joispec = prepare_spec(spec, ctxt)
 
   if (options.unknown) {
@@ -33,50 +31,49 @@ function make_optioner (spec, options) {
 
   var schema = Joi.compile(joispec)
 
-  return function optioner (input, done) {
+  return function optioner(input, done) {
     var work = Hoek.clone(input) || {}
 
     // converts arrays to objects so that validation can be performed on a
     // per-element basis
     work = arr2obj(work, ctxt)
 
-    Joi.validate(work, schema, function (err, out) {
-      done(err, obj2arr(out, ctxt))
-    })
+    if (null == done) {
+      var result = Joi.validate(work, schema)
+      result.value = obj2arr(result.value, ctxt)
+      return result
+    } else {
+      Joi.validate(work, schema, function(err, out) {
+        done(err, obj2arr(out, ctxt))
+      })
+    }
   }
 }
 
-
-function prepare_spec (spec, ctxt) {
-  var joi = walk(
-    Joi.object(),
-    spec,
-    '',
-    ctxt,
-    function (valspec) {
-      if (valspec && valspec.isJoi) {
-        return valspec
+function prepare_spec(spec, ctxt) {
+  var joi = walk(Joi.object(), spec, '', ctxt, function(valspec) {
+    if (valspec && valspec.isJoi) {
+      return valspec
+    } else if (null == valspec) {
+      return Joi.default(valspec)
+    } else {
+      var typecheck = typeof valspec
+      typecheck = 'function' === typecheck ? 'func' : typecheck
+      if ('number' === typecheck && Hoek.isInteger(valspec)) {
+        return Joi.number()
+          .integer()
+          .default(valspec)
       }
-      else if (null == valspec) {
-        return Joi.default(valspec)
-      }
-      else {
-        var typecheck = typeof valspec
-        typecheck = 'function' === typecheck ? 'func' : typecheck
-        if ('number' === typecheck && Hoek.isInteger(valspec)) {
-          return Joi.number().integer().default(valspec)
-        }
-        return Joi[typecheck]
-          ? Joi[typecheck]().default(valspec)
-          : Joi.any().default(valspec, 'value')
-      }
-    })
+      return Joi[typecheck]
+        ? Joi[typecheck]().default(valspec)
+        : Joi.any().default(valspec, 'value')
+    }
+  })
 
   return joi
 }
 
-
-function walk (joi, obj, path, ctxt, mod) {
+function walk(joi, obj, path, ctxt, mod) {
   if (Util.isArray(obj)) {
     ctxt.arrpaths.push(path)
   }
@@ -90,8 +87,7 @@ function walk (joi, obj, path, ctxt, mod) {
     if (null != v && !v.isJoi && 'object' === t) {
       var np = '' === path ? p : path + '.' + p
       kv[p] = walk(Joi.object().default(), v, np, ctxt, mod)
-    }
-    else {
+    } else {
       kv[p] = mod(v)
     }
 
@@ -101,8 +97,7 @@ function walk (joi, obj, path, ctxt, mod) {
   return joi
 }
 
-
-function inject (path, val, obj) {
+function inject(path, val, obj) {
   var top = obj
 
   if (null == obj) return obj
@@ -119,16 +114,14 @@ function inject (path, val, obj) {
 
   if ('' === pp[i]) {
     top = val
-  }
-  else {
+  } else {
     obj[pp[i]] = val
   }
 
   return top
 }
 
-
-function arr2obj (work, ctxt) {
+function arr2obj(work, ctxt) {
   if (null == work) return work
 
   for (var apI = 0; apI < ctxt.arrpaths.length; ++apI) {
@@ -149,7 +142,7 @@ function arr2obj (work, ctxt) {
   return work
 }
 
-function obj2arr (work, ctxt) {
+function obj2arr(work, ctxt) {
   if (null == work) return work
 
   for (var apI = 0; apI < ctxt.arrpaths.length; ++apI) {

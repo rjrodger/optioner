@@ -1,6 +1,6 @@
 {
   "name": "optioner",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Process and validate options for your module.",
   "main": "optioner.js",
   "scripts": {

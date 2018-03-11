@@ -1,3 +1,4 @@
+/* Copyright (c) 2017-2018 Richard Rodger and other contributors, MIT License */
 'use strict'
 
 var Optioner = require('..')
@@ -33,7 +34,7 @@ describe('optioner', function() {
 
     opter({}, function(err, out) {
       if (err) return done(err)
-      // console.log('OUT', out)
+      //console.log('OUT', out)
       expect(out).to.equal({
         a: 1,
         b: { c: 2 },
@@ -196,12 +197,12 @@ describe('optioner', function() {
   })
 
   it('obj2arr', function(done) {
-    expect(
-      Optioner.obj2arr({ a: { '0': 1 } }, { arrpaths: ['a'] })
-    ).to.equal({ a: [1] })
-    expect(
-      Optioner.obj2arr({ a: { '0': 1 } }, { arrpaths: [] })
-    ).to.equal({ a: { '0': 1 } })
+    expect(Optioner.obj2arr({ a: { '0': 1 } }, { arrpaths: ['a'] })).to.equal({
+      a: [1]
+    })
+    expect(Optioner.obj2arr({ a: { '0': 1 } }, { arrpaths: [] })).to.equal({
+      a: { '0': 1 }
+    })
     expect(Optioner.obj2arr({ a: [1] }, { arrpaths: ['a'] })).to.equal({
       a: [1]
     })
@@ -261,5 +262,23 @@ describe('optioner', function() {
     })
 
     done()
+  })
+
+  it('check', function(done) {
+    var optioner = Optioner({
+      bool: Joi.boolean().default(true)
+    })
+
+    expect(optioner.check({})).contains({ bool: true })
+    expect(optioner.check({ bool: true })).contains({ bool: true })
+    expect(optioner.check({ bool: false })).contains({ bool: false })
+
+    try {
+      optioner.check({ bool: 'foo' })
+      Code.fail('never')
+    } catch (e) {
+      expect(e.name).equal('ValidationError')
+      return done()
+    }
   })
 })

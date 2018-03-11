@@ -1,10 +1,10 @@
 {
   "name": "optioner",
-  "version": "0.9.1",
+  "version": "1.0.0",
   "description": "Process and validate options for your module.",
   "main": "optioner.js",
   "scripts": {
-    "test": "lab -P test -v -t 95",
+    "test": "lab -P test -v -t 100 -I SharedArrayBuffer,Atomics",
     "prettier": "prettier --write --no-semi --single-quote *.js lib/*.js test/*.js"
   },
   "repository": {
@@ -24,13 +24,13 @@
   },
   "homepage": "https://github.com/rjrodger/optioner",
   "dependencies": {
-    "hoek": "4.2.x",
-    "joi": "11.3.x"
+    "hoek": "5.0.x",
+    "joi": "13.1.x"
   },
   "devDependencies": {
-    "code": "4.1.x",
+    "code": "5.2.x",
     "lab": "14.0.x",
-    "prettier": "1.7.x"
+    "prettier": "1.11.x"
   },
   "files": [
     "README.md",

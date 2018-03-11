@@ -18,20 +18,12 @@ module.exports.inject = inject
 module.exports.arr2obj = arr2obj
 module.exports.obj2arr = obj2arr
 
-function make_optioner(spec, options) {
-  options = options || {}
-  options.unknown = null == options.unknown ? true : options.unknown
-
+function make_optioner(spec) {
   var ctxt = { arrpaths: [] }
   var joispec = prepare_spec(spec, ctxt)
-
-  if (options.unknown) {
-    joispec = joispec.unknown()
-  }
-
   var schema = Joi.compile(joispec)
 
-  return function optioner(input, done) {
+  function validate(input, done) {
     var work = Hoek.clone(input) || {}
 
     // converts arrays to objects so that validation can be performed on a
@@ -48,6 +40,14 @@ function make_optioner(spec, options) {
       })
     }
   }
+
+  validate.check = function check(input) {
+    var result = validate(input)
+    if (result.error) throw result.error
+    return result.value
+  }
+
+  return validate
 }
 
 function prepare_spec(spec, ctxt) {
@@ -64,9 +64,12 @@ function prepare_spec(spec, ctxt) {
           .integer()
           .default(valspec)
       }
-      return Joi[typecheck]
-        ? Joi[typecheck]().default(valspec)
-        : Joi.any().default(valspec, 'value')
+
+      return Joi[typecheck]().default(valspec)
+
+      //return Joi[typecheck]
+      //? Joi[typecheck]().default(valspec)
+      //: Joi.any().default(valspec, 'value')
     }
   })
 

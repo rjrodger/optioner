@@ -28,7 +28,7 @@
     "joi": "13.1.x"
   },
   "devDependencies": {
-    "code": "5.2.x",
+    "code": "4.1.x",
     "lab": "14.0.x",
     "prettier": "1.11.x"
   },

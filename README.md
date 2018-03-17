@@ -28,6 +28,12 @@ where _type_ is the type of the value.
 ```js
 var Optioner = require('optioner')
 
+var check = Optioner({beatles: 4}).check
+
+// prints { beatles: 4, stones: 5 }
+console.log(check({stones: 5}))
+
+
 var optioner = Optioner({
   color: 'red',
   size: Joi.number().integer().max(5).min(1).default(3),
@@ -58,6 +64,13 @@ optioner({size: 6}, function (err, out) {
   console.log(err)
 })
 ```
+
+## Options
+
+`Optioner({ ... spec ... }, { ... options ... }})`
+
+* _allow_unknown_: `true|false`, default `true`
+
 
 ## Questions?
 

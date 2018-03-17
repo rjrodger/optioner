@@ -1,6 +1,6 @@
 /*
   MIT License,
-  Copyright (c) 2016, Richard Rodger and other contributors.
+  Copyright (c) 2016-2018, Richard Rodger and other contributors.
 */
 
 'use strict'
@@ -10,17 +10,25 @@ var Util = require('util')
 var Joi = require('joi')
 var Hoek = require('hoek')
 
-module.exports = function(spec) {
-  return make_optioner(spec)
+module.exports = function(spec, options) {
+  return make_optioner(spec, options)
 }
 module.exports.Joi = Joi
 module.exports.inject = inject
 module.exports.arr2obj = arr2obj
 module.exports.obj2arr = obj2arr
 
-function make_optioner(spec) {
+function make_optioner(spec, options) {
+  var opts = options || {}
+  opts.allow_unknown = null == opts.allow_unknown ? true : !!opts.allow_unknown
+  
   var ctxt = { arrpaths: [] }
   var joispec = prepare_spec(spec, ctxt)
+
+  if (opts.allow_unknown) {	
+    joispec = joispec.unknown()	
+  }
+  
   var schema = Joi.compile(joispec)
 
   function validate(input, done) {

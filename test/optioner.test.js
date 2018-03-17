@@ -14,7 +14,7 @@ var expect = Code.expect
 var Joi = Optioner.Joi
 
 describe('optioner', function() {
-  it('happy', function(done) {
+  it('happy', function(fin) {
     var opter = Optioner({
       a: 1,
       b: { c: 2 },
@@ -33,7 +33,7 @@ describe('optioner', function() {
     })
 
     opter({}, function(err, out) {
-      if (err) return done(err)
+      if (err) return fin(err)
       //console.log('OUT', out)
       expect(out).to.equal({
         a: 1,
@@ -44,42 +44,42 @@ describe('optioner', function() {
         i: [5, 6],
         j: [{ k: 7 }]
       })
-      done()
+      fin()
     })
   })
 
-  it('empty', function(done) {
+  it('empty', function(fin) {
     var opter = Optioner({ a: 1 })
 
     opter(null, function(err, out) {
-      if (err) return done(err)
+      if (err) return fin(err)
       expect(out).to.equal({ a: 1 })
-      done()
+      fin()
     })
   })
 
-  it('array', function(done) {
+  it('array', function(fin) {
     var opter = Optioner([1, Joi.string().default('a')])
 
     opter({}, function(err, out) {
-      if (err) return done(err)
+      if (err) return fin(err)
       expect(out).to.equal([1, 'a'])
 
       opter([], function(err, out) {
-        if (err) return done(err)
+        if (err) return fin(err)
         expect(out).to.equal([1, 'a'])
 
         opter([1], function(err, out) {
-          if (err) return done(err)
+          if (err) return fin(err)
           expect(out).to.equal([1, 'a'])
 
-          done()
+          fin()
         })
       })
     })
   })
 
-  it('function', function(done) {
+  it('function', function(fin) {
     var fx = function(x) {
       return x + 1
     }
@@ -89,7 +89,7 @@ describe('optioner', function() {
     })
 
     opter({}, function(err, out) {
-      if (err) return done(err)
+      if (err) return fin(err)
       expect(out.a(1)).to.equal(2)
 
       opter(
@@ -99,28 +99,28 @@ describe('optioner', function() {
           }
         },
         function(err, out) {
-          if (err) return done(err)
+          if (err) return fin(err)
           expect(out.a(1)).to.equal(3)
 
-          done()
+          fin()
         }
       )
     })
   })
 
-  it('edge', function(done) {
+  it('edge', function(fin) {
     var opter = Optioner({
       a: undefined
     })
 
     opter({}, function(err, out) {
-      if (err) return done(err)
+      if (err) return fin(err)
       expect(out).to.equal({})
-      done()
+      fin()
     })
   })
 
-  it('default-types', function(done) {
+  it('default-types', function(fin) {
     var opter = Optioner({
       a: 1,
       b: 1.1,
@@ -129,14 +129,14 @@ describe('optioner', function() {
     })
 
     opter({ a: 2, b: 2.2, c: 'y', d: false }, function(err, out) {
-      if (err) return done(err)
+      if (err) return fin(err)
       expect(out).to.equal({ a: 2, b: 2.2, c: 'y', d: false })
 
       opter({ a: 3.3 }, function(err, out) {
         expect(err.details[0].type).to.equal('number.integer')
 
         opter({ b: 4 }, function(err, out) {
-          if (err) return done(err)
+          if (err) return fin(err)
           expect(out).to.equal({ a: 1, b: 4, c: 'x', d: true })
 
           opter({ b: 'z' }, function(err, out) {
@@ -148,7 +148,7 @@ describe('optioner', function() {
               opter({ d: 'q' }, function(err, out) {
                 expect(err.details[0].type).to.equal('boolean.base')
 
-                done()
+                fin()
               })
             })
           })
@@ -157,7 +157,7 @@ describe('optioner', function() {
     })
   })
 
-  it('inject', function(done) {
+  it('inject', function(fin) {
     expect(Optioner.inject(null, { x: 1 }, { y: 1 })).to.equal({ x: 1 })
     expect(Optioner.inject('', { x: 1 }, { y: 1 })).to.equal({ x: 1 })
     expect(Optioner.inject('', { '0': 1 }, [1])).to.equal({ '0': 1 })
@@ -175,10 +175,10 @@ describe('optioner', function() {
     expect(Optioner.inject('a.0.b', 1, { a: [{ c: 2 }] })).to.equal({
       a: [{ c: 2, b: 1 }]
     })
-    done()
+    fin()
   })
 
-  it('arr2obj', function(done) {
+  it('arr2obj', function(fin) {
     expect(Optioner.arr2obj({ a: [1] }, { arrpaths: ['a'] })).to.equal({
       a: { '0': 1 }
     })
@@ -193,10 +193,10 @@ describe('optioner', function() {
       Optioner.arr2obj({ a: [1], b: { c: [2] } }, { arrpaths: ['a', 'b.c'] })
     ).to.equal({ a: { '0': 1 }, b: { c: { '0': 2 } } })
 
-    done()
+    fin()
   })
 
-  it('obj2arr', function(done) {
+  it('obj2arr', function(fin) {
     expect(Optioner.obj2arr({ a: { '0': 1 } }, { arrpaths: ['a'] })).to.equal({
       a: [1]
     })
@@ -221,10 +221,10 @@ describe('optioner', function() {
       )
     ).to.equal({ a: [1], b: { c: [2] } })
 
-    done()
+    fin()
   })
 
-  it('readme', function(done) {
+  it('readme', function(fin) {
     var optioner = Optioner({
       color: 'red',
       size: Joi.number()
@@ -244,13 +244,13 @@ describe('optioner', function() {
     // .then(console.log)
 
     optioner({}, function(err, out) {
-      if (err) return done(err)
+      if (err) return fin(err)
       // prints: { color: 'red', size: 3, range: [ 100, 200 ] }
       // console.log(out)
     })
 
     optioner({ range: [50] }, function(err, out) {
-      if (err) return done(err)
+      if (err) return fin(err)
       // prints: { range: [ 50, 200 ], color: 'red', size: 3 }
       // console.log(out)
     })
@@ -261,10 +261,10 @@ describe('optioner', function() {
       // console.log(err)
     })
 
-    done()
+    fin()
   })
 
-  it('check', function(done) {
+  it('check', function(fin) {
     var optioner = Optioner({
       bool: Joi.boolean().default(true)
     })
@@ -278,7 +278,33 @@ describe('optioner', function() {
       Code.fail('never')
     } catch (e) {
       expect(e.name).equal('ValidationError')
-      return done()
+      return fin()
     }
   })
+
+
+  it('ignore', function(fin) {
+    var optioner_ignore = Optioner({
+      a: 1
+    })
+
+    expect(optioner_ignore.check({})).contains({ a: 1 })
+    expect(optioner_ignore.check({ b: 2 })).contains({ a: 1, b: 2 })
+    expect(optioner_ignore.check({ a: 1, b: 2 })).contains({ a: 1, b: 2 })
+
+    var optioner_fail = Optioner({
+      a: 1
+    }, {allow_unknown: false})
+
+    expect(optioner_fail.check({})).contains({ a: 1 })
+
+    try {
+      optioner_fail.check({ a: 1, b: 2 })
+      Code.fail('never')
+    } catch (e) {
+      expect(e.name).equal('ValidationError')
+      return fin()
+    }
+  })
+
 })

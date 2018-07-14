@@ -303,8 +303,33 @@ describe('optioner', function() {
       Code.fail('never')
     } catch (e) {
       expect(e.name).equal('ValidationError')
-      return fin()
     }
+
+    var optioner_ignore_deep = Optioner({
+      a: 1,
+      b: { c: 2 }
+    })
+
+    expect(optioner_ignore_deep.check({})).contains({ a: 1, b: { c: 2 } })
+    expect(optioner_ignore_deep.check({b: {d: 3}}))
+      .contains({ a: 1, b: { c: 2, d: 3} })
+
+    var optioner_ignore_deep_fail = Optioner({
+      a: 1,
+      b: { c: 2 }
+    }, {allow_unknown: false})
+
+    expect(optioner_ignore_deep_fail.check({})).contains({ a: 1, b: { c: 2 } })
+
+    try {
+      expect(optioner_ignore_deep_fail.check({b: {d: 3}}))
+        .contains({ a: 1, b: { c: 2, d: 3} })
+      Code.fail('never')
+    } catch (e) {
+      expect(e.name).equal('ValidationError')
+    }
+    
+    fin()
   })
 
 })

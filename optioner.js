@@ -23,11 +23,13 @@ function make_optioner(spec, options) {
   opts.allow_unknown = null == opts.allow_unknown ? true : !!opts.allow_unknown
   
   var ctxt = { arrpaths: [] }
-  var joispec = prepare_spec(spec, ctxt)
+  var joispec = prepare_spec(spec, opts, ctxt)
 
+/*
   if (opts.allow_unknown) {	
     joispec = joispec.unknown()	
   }
+*/
   
   var schema = Joi.compile(joispec)
 
@@ -58,8 +60,14 @@ function make_optioner(spec, options) {
   return validate
 }
 
-function prepare_spec(spec, ctxt) {
-  var joi = walk(Joi.object(), spec, '', ctxt, function(valspec) {
+function prepare_spec(spec, opts, ctxt) {
+  var joiobj = Joi.object()
+
+  if (opts.allow_unknown) {	
+    joiobj = joiobj.unknown()	
+  }
+
+  var joi = walk(joiobj, spec, '', opts, ctxt, function(valspec) {
     if (valspec && valspec.isJoi) {
       return valspec
     } else if (null == valspec) {
@@ -84,7 +92,7 @@ function prepare_spec(spec, ctxt) {
   return joi
 }
 
-function walk(joi, obj, path, ctxt, mod) {
+function walk(joi, obj, path, opts, ctxt, mod) {
   if (Util.isArray(obj)) {
     ctxt.arrpaths.push(path)
   }
@@ -97,7 +105,14 @@ function walk(joi, obj, path, ctxt, mod) {
 
     if (null != v && !v.isJoi && 'object' === t) {
       var np = '' === path ? p : path + '.' + p
-      kv[p] = walk(Joi.object().default(), v, np, ctxt, mod)
+
+      var joiobj = Joi.object().default()
+
+      if (opts.allow_unknown) {	
+        joiobj = joiobj.unknown()	
+      }
+
+      kv[p] = walk(joiobj, v, np, opts, ctxt, mod)
     } else {
       kv[p] = mod(v)
     }

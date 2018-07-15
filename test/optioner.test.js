@@ -332,4 +332,81 @@ describe('optioner', function() {
     fin()
   })
 
+
+  it('must_match', function(fin) {
+    var o0 = Optioner({
+      a: 1,
+    }, {must_match_literals: true })
+
+    expect(o0.check({a:1})).equals({ a:1 })
+    expect(o0.check({a:1,b:2})).includes({ a:1 })
+
+    expect(o0({}).error.message)
+      .equals('child "a" fails because ["a" is required]')
+    expect(o0({a:2}).error.message)
+      .equals('child "a" fails because ["a" must be one of [1]]')
+    expect(o0({a:'x'}).error.message)
+      .equals('child "a" fails because ["a" must be one of [1]]')
+
+    var o1 = Optioner({
+      a: 1, b: { c: 2 }
+    }, {must_match_literals: true })
+
+    expect(o1.check({a:1,b:{c:2}})).equals({ a:1,b:{c:2} })
+    expect(o1.check({a:1,b:{c:2,z:3},y:4})).equals({ a:1,b:{c:2,z:3},y:4 })
+
+    expect(o1({a:1}).error.message)
+      .equals('child "b" fails because [child "c" fails because ["c" is required]]')
+    expect(o1({a:1,b:{}}).error.message)
+      .equals('child "b" fails because [child "c" fails because ["c" is required]]')
+    expect(o1({a:1,b:{c:'x'}}).error.message)
+      .equals('child "b" fails because [child "c" fails because ["c" must be one of [2]]]')
+
+    var o2 = Optioner({
+      a: 1, b: Joi.string()
+    }, {must_match_literals: true })
+
+    expect(o2.check({a:1,b:'x'})).equals({ a:1,b:'x' })
+    expect(o2({a:1,b:2}).error.message)
+      .equals('child "b" fails because ["b" must be a string]')
+
+    var o3 = Optioner({
+      a: { b: { c: 1 } }
+    }, {must_match_literals: true })
+
+    expect(o3.check({a:{b:{c:1}}})).equals({ a:{b:{c:1}}})
+    expect(o3({a:{b:{c:2}}}).error.message)
+      .equals('child "a" fails because [child "b" fails because [child "c" fails because ["c" must be one of [1]]]]')
+
+    var o4 = Optioner({
+      a: [1]
+    }, {must_match_literals: true })
+
+    expect(o4.check({a:[1]})).equals({a:[1]})
+    expect(o4.check({a:[1,2]})).equals({a:[1,2]})
+    expect(o4({a:[2]}).error.message)
+      .equals('child "a" fails because [child "0" fails because ["0" must be one of [1]]]')
+
+    var o5 = Optioner({
+      a: [{b:1}]
+    }, {must_match_literals: true })
+
+    expect(o5.check({a:[{b:1}]})).equals({a:[{b:1}]})
+    expect(o5.check({a:[{b:1,c:2},{b:3}]})).equals({a:[{b:1,c:2},{b:3}]})
+    expect(o5({a:[{b:11,c:2},{b:3}]}).error.message)
+      .equals('child "a" fails because [child "0" fails because [child "b" fails because ["b" must be one of [1]]]]')
+
+    var o6 = Optioner([1], {must_match_literals: true })
+    expect(o6.check([1])).equals([1])
+    expect(o6([2]).error.message)
+      .equals('child "0" fails because ["0" must be one of [1]]')
+
+    var o7 = Optioner([{},{a:2}], {must_match_literals: true })
+    expect(o7.check([{a:1},{a:2},{a:3}])).equals([{a:1},{a:2},{a:3}])
+    expect(o7([{a:1},{a:3}]).error.message)
+      .equals('child "1" fails because [child "a" fails because ["a" must be one of [2]]]')
+
+    fin()
+  })
+
 })

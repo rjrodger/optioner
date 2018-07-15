@@ -23,14 +23,7 @@ function make_optioner(spec, options) {
   opts.allow_unknown = null == opts.allow_unknown ? true : !!opts.allow_unknown
   
   var ctxt = { arrpaths: [] }
-  var joispec = prepare_spec(spec, opts, ctxt)
-
-/*
-  if (opts.allow_unknown) {	
-    joispec = joispec.unknown()	
-  }
-*/
-  
+  var joispec = prepare_spec(spec, opts, ctxt)  
   var schema = Joi.compile(joispec)
 
   function validate(input, done) {
@@ -70,22 +63,27 @@ function prepare_spec(spec, opts, ctxt) {
   var joi = walk(joiobj, spec, '', opts, ctxt, function(valspec) {
     if (valspec && valspec.isJoi) {
       return valspec
-    } else if (null == valspec) {
-      return Joi.default(valspec)
-    } else {
+    }
+    else {
       var typecheck = typeof valspec
       typecheck = 'function' === typecheck ? 'func' : typecheck
-      if ('number' === typecheck && Hoek.isInteger(valspec)) {
-        return Joi.number()
-          .integer()
-          .default(valspec)
+
+      if(opts.must_match_literals) {
+        return Joi.any().required().valid(valspec)
       }
-
-      return Joi[typecheck]().default(valspec)
-
-      //return Joi[typecheck]
-      //? Joi[typecheck]().default(valspec)
-      //: Joi.any().default(valspec, 'value')
+      else {
+        if (null == valspec) {
+          return Joi.default(valspec)
+        }
+        else if ('number' === typecheck && Hoek.isInteger(valspec)) {
+          return Joi.number()
+            .integer()
+            .default(valspec)
+        }
+        else {
+          return Joi[typecheck]().default(valspec)
+        }
+      }
     }
   })
 

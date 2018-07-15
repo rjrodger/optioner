@@ -69,7 +69,8 @@ optioner({size: 6}, function (err, out) {
 
 `Optioner({ ... spec ... }, { ... options ... }})`
 
-* _allow_unknown_: `true|false`, default `true`
+* _allow_unknown_: `true|false`, default `true`; allow unknown properties
+* _must_match_literals_: `true|false`, default `false`; force exact matches of literal values
 
 
 ## Questions?

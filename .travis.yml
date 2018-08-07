@@ -4,6 +4,8 @@ sudo: false
 node_js:
   - '10'
   - '8'
+  - '6'
+  - '4'
 
 after_script:
   - npm run coveralls

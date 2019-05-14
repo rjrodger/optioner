@@ -1,14 +1,10 @@
-/*
-  MIT License,
-  Copyright (c) 2016-2018, Richard Rodger and other contributors.
-*/
-
+/* Copyright (c) 2017-2019 Richard Rodger and other contributors, MIT License */
 'use strict'
 
 var Util = require('util')
 
-var Joi = require('joi')
-var Hoek = require('hoek')
+var Joi = require('@hapi/joi')
+var Hoek = require('@hapi/hoek')
 
 module.exports = function(spec, options) {
   return make_optioner(spec, options)
@@ -21,9 +17,9 @@ module.exports.obj2arr = obj2arr
 function make_optioner(spec, options) {
   var opts = options || {}
   opts.allow_unknown = null == opts.allow_unknown ? true : !!opts.allow_unknown
-  
+
   var ctxt = { arrpaths: [] }
-  var joispec = prepare_spec(spec, opts, ctxt)  
+  var joispec = prepare_spec(spec, opts, ctxt)
   var schema = Joi.compile(joispec)
 
   function validate(input, done) {
@@ -56,31 +52,29 @@ function make_optioner(spec, options) {
 function prepare_spec(spec, opts, ctxt) {
   var joiobj = Joi.object()
 
-  if (opts.allow_unknown) {	
-    joiobj = joiobj.unknown()	
+  if (opts.allow_unknown) {
+    joiobj = joiobj.unknown()
   }
 
   var joi = walk(joiobj, spec, '', opts, ctxt, function(valspec) {
     if (valspec && valspec.isJoi) {
       return valspec
-    }
-    else {
+    } else {
       var typecheck = typeof valspec
       typecheck = 'function' === typecheck ? 'func' : typecheck
 
-      if(opts.must_match_literals) {
-        return Joi.any().required().valid(valspec)
-      }
-      else {
+      if (opts.must_match_literals) {
+        return Joi.any()
+          .required()
+          .valid(valspec)
+      } else {
         if (null == valspec) {
           return Joi.default(valspec)
-        }
-        else if ('number' === typecheck && Hoek.isInteger(valspec)) {
+        } else if ('number' === typecheck && Number.isInteger(valspec)) {
           return Joi.number()
             .integer()
             .default(valspec)
-        }
-        else {
+        } else {
           return Joi[typecheck]().default(valspec)
         }
       }
@@ -106,8 +100,8 @@ function walk(joi, obj, path, opts, ctxt, mod) {
 
       var joiobj = Joi.object().default()
 
-      if (opts.allow_unknown) {	
-        joiobj = joiobj.unknown()	
+      if (opts.allow_unknown) {
+        joiobj = joiobj.unknown()
       }
 
       kv[p] = walk(joiobj, v, np, opts, ctxt, mod)

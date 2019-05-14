@@ -1,13 +1,15 @@
 {
   "name": "optioner",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Process and validate options for your module.",
   "main": "optioner.js",
   "scripts": {
     "test": "lab -P test -v -t 100 -I BigUint64Array,BigInt64Array,BigInt,URL,URLSearchParams",
     "coveralls": "lab -s -P test -r lcov | coveralls",
     "prettier": "prettier --write *.js lib/*.js test/*.js",
-    "clean": "rm -rf node_modules package-lock.json yarn.lock"
+    "clean": "rm -rf node_modules package-lock.json yarn.lock",
+    "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
+    "repo-publish": "npm run prettier && npm test && npm run repo-tag && npm publish --access public"
   },
   "repository": {
     "type": "git",
@@ -26,14 +28,14 @@
   },
   "homepage": "https://github.com/rjrodger/optioner",
   "dependencies": {
-    "hoek": "4.2",
-    "joi": "12.0"
+    "@hapi/hoek": "^6.2.1",
+    "@hapi/joi": "^15.0.3"
   },
   "devDependencies": {
-    "code": "4",
-    "lab": "14",
-    "prettier": "1",
-    "coveralls": "3"
+    "@hapi/code": "^5.3.1",
+    "@hapi/lab": "^18.1.2",
+    "coveralls": "^3.0.3",
+    "prettier": "^1.17.1"
   },
   "files": [
     "README.md",

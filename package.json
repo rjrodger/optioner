@@ -1,6 +1,6 @@
 {
   "name": "optioner",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Process and validate options for your module.",
   "main": "optioner.js",
   "scripts": {
@@ -28,14 +28,14 @@
   },
   "homepage": "https://github.com/rjrodger/optioner",
   "dependencies": {
-    "@hapi/hoek": "^6.2.1",
-    "@hapi/joi": "^15.0.3"
+    "@hapi/hoek": "^8.2.2",
+    "@hapi/joi": "^15.1.1"
   },
   "devDependencies": {
-    "@hapi/code": "^5.3.1",
-    "@hapi/lab": "^18.1.2",
-    "coveralls": "^3.0.3",
-    "prettier": "^1.17.1"
+    "@hapi/code": "^6.0.0",
+    "@hapi/lab": "^20.2.2",
+    "coveralls": "^3.0.6",
+    "prettier": "^1.18.2"
   },
   "files": [
     "README.md",

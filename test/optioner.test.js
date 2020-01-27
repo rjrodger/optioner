@@ -353,15 +353,9 @@ describe('optioner', function() {
     expect(o0.check({ a: 1 })).equals({ a: 1 })
     expect(o0.check({ a: 1, b: 2 })).includes({ a: 1 })
 
-    expect(o0({}).error.message).equals(
-      '"a" is required'
-    )
-    expect(o0({ a: 2 }).error.message).equals(
-      '"a" must be [1]'
-    )
-    expect(o0({ a: 'x' }).error.message).equals(
-      '"a" must be [1]'
-    )
+    expect(o0({}).error.message).equals('"a" is required')
+    expect(o0({ a: 2 }).error.message).equals('"a" must be [1]')
+    expect(o0({ a: 'x' }).error.message).equals('"a" must be [1]')
 
     var o1 = Optioner(
       {
@@ -400,9 +394,7 @@ describe('optioner', function() {
     )
 
     expect(o2.check({ a: 1, b: 'x' })).equals({ a: 1, b: 'x' })
-    expect(o2({ a: 1, b: 2 }).error.message).equals(
-      '"b" must be a string'
-    )
+    expect(o2({ a: 1, b: 2 }).error.message).equals('"b" must be a string')
 
     var o3 = Optioner(
       {

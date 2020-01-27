@@ -27,12 +27,11 @@ function make_optioner(spec, options) {
     // per-element basis
     work = arr2obj(work, ctxt)
 
-
     var result = schema.validate(work)
-    if(!result.error) {
+    if (!result.error) {
       result.value = obj2arr(result.value, ctxt)
     }
-    
+
     if (null == done) {
       return result
     } else {
@@ -70,15 +69,14 @@ function prepare_spec(spec, opts, ctxt) {
       } else {
         if (void 0 === valspec) {
           return Joi.any().optional()
-        }
-        else if (null == valspec) {
+        } else if (null == valspec) {
           return Joi.any().default(null)
         } else if ('number' === typecheck && Number.isInteger(valspec)) {
           return Joi.number()
             .integer()
             .default(valspec)
         } else {
-          return Joi[typecheck]().default(()=>valspec)
+          return Joi[typecheck]().default(() => valspec)
         }
       }
     }

@@ -8,6 +8,7 @@
     "coveralls": "lab -s -P test -r lcov | coveralls",
     "prettier": "prettier --write *.js lib/*.js test/*.js",
     "clean": "rm -rf node_modules package-lock.json yarn.lock",
+    "reset": "npm run clean && npm i && npm test",
     "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
     "repo-publish": "npm run prettier && npm test && npm run repo-tag && npm publish --access public --registry http://registry.npmjs.org"
   },
@@ -28,14 +29,14 @@
   },
   "homepage": "https://github.com/rjrodger/optioner",
   "dependencies": {
-    "@hapi/hoek": "^8.2.2",
-    "@hapi/joi": "^15.1.1"
+    "@hapi/hoek": "^9.0.2",
+    "@hapi/joi": "^17.1.0"
   },
   "devDependencies": {
-    "@hapi/code": "^6.0.0",
-    "@hapi/lab": "^20.2.2",
-    "coveralls": "^3.0.6",
-    "prettier": "^1.18.2"
+    "@hapi/code": "^8.0.1",
+    "@hapi/lab": "^22.0.3",
+    "coveralls": "^3.0.9",
+    "prettier": "^1.19.1"
   },
   "files": [
     "README.md",

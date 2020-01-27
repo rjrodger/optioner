@@ -73,6 +73,12 @@ optioner({size: 6}, function (err, out) {
 * _must_match_literals_: `true|false`, default `false`; force exact matches of literal values
 
 
+## Dependencies
+
+* NOTE: requires `@hapi/joi` >= 16, as: https://github.com/hapijs/joi/issues/2037
+
+
+
 ## Questions?
 
 [@rjrodger](https://twitter.com/rjrodger)

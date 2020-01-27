@@ -1,7 +1,5 @@
-/* Copyright (c) 2017-2019 Richard Rodger and other contributors, MIT License */
+/* Copyright (c) 2017-2020 Richard Rodger and other contributors, MIT License. */
 'use strict'
-
-var Util = require('util')
 
 var Joi = require('@hapi/joi')
 var Hoek = require('@hapi/hoek')
@@ -29,14 +27,16 @@ function make_optioner(spec, options) {
     // per-element basis
     work = arr2obj(work, ctxt)
 
-    if (null == done) {
-      var result = Joi.validate(work, schema)
+
+    var result = schema.validate(work)
+    if(!result.error) {
       result.value = obj2arr(result.value, ctxt)
+    }
+    
+    if (null == done) {
       return result
     } else {
-      Joi.validate(work, schema, function(err, out) {
-        done(err, obj2arr(out, ctxt))
-      })
+      return done(result.error, result.value)
     }
   }
 
@@ -57,25 +57,28 @@ function prepare_spec(spec, opts, ctxt) {
   }
 
   var joi = walk(joiobj, spec, '', opts, ctxt, function(valspec) {
-    if (valspec && valspec.isJoi) {
+    if (valspec && Joi.isSchema(valspec)) {
       return valspec
     } else {
       var typecheck = typeof valspec
-      typecheck = 'function' === typecheck ? 'func' : typecheck
+      //typecheck = 'function' === typecheck ? 'func' : typecheck
 
       if (opts.must_match_literals) {
         return Joi.any()
           .required()
           .valid(valspec)
       } else {
-        if (null == valspec) {
-          return Joi.default(valspec)
+        if (void 0 === valspec) {
+          return Joi.any().optional()
+        }
+        else if (null == valspec) {
+          return Joi.any().default(null)
         } else if ('number' === typecheck && Number.isInteger(valspec)) {
           return Joi.number()
             .integer()
             .default(valspec)
         } else {
-          return Joi[typecheck]().default(valspec)
+          return Joi[typecheck]().default(()=>valspec)
         }
       }
     }
@@ -85,7 +88,7 @@ function prepare_spec(spec, opts, ctxt) {
 }
 
 function walk(joi, obj, path, opts, ctxt, mod) {
-  if (Util.isArray(obj)) {
+  if (Array.isArray(obj)) {
     ctxt.arrpaths.push(path)
   }
 
@@ -95,7 +98,7 @@ function walk(joi, obj, path, opts, ctxt, mod) {
 
     var kv = {}
 
-    if (null != v && !v.isJoi && 'object' === t) {
+    if (null != v && !Joi.isSchema(v) && 'object' === t) {
       var np = '' === path ? p : path + '.' + p
 
       var joiobj = Joi.object().default()
@@ -146,7 +149,7 @@ function arr2obj(work, ctxt) {
     var ap = ctxt.arrpaths[apI]
     var arr = '' === ap ? work : Hoek.reach(work, ap)
 
-    if (Util.isArray(arr)) {
+    if (Array.isArray(arr)) {
       var obj = {}
 
       for (var i = 0; i < arr.length; ++i) {
@@ -167,7 +170,7 @@ function obj2arr(work, ctxt) {
     var ap = ctxt.arrpaths[apI]
     var obj = '' === ap ? work : Hoek.reach(work, ap)
 
-    if (!Util.isArray(obj)) {
+    if (!Array.isArray(obj)) {
       var arr = []
 
       for (var p in obj) {

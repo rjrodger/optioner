@@ -458,7 +458,6 @@ describe('optioner', function() {
     )
   })
 
-
   it('empty-string', async () => {
     var opt0 = Optioner({
       a: '',
@@ -467,13 +466,12 @@ describe('optioner', function() {
 
     //console.dir(opt0.joi.describe(),{depth:null})
 
-    var res0 = opt0.check({a:'x'})
+    var res0 = opt0.check({ a: 'x' })
     //console.log(res0)
     expect(res0).equals({ a: 'x', b: 'x' })
-    
-    var res1 = opt0.check({a:''})
+
+    var res1 = opt0.check({ a: '' })
     //console.log(res1)
     expect(res1).equals({ a: '', b: 'x' })
   })
-
 })

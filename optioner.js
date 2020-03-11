@@ -45,6 +45,8 @@ function make_optioner(spec, options) {
     return result.value
   }
 
+  validate.joi = joispec
+  
   return validate
 }
 
@@ -75,6 +77,8 @@ function prepare_spec(spec, opts, ctxt) {
           return Joi.number()
             .integer()
             .default(valspec)
+        } else if ('string' === typecheck) {
+          return Joi.string().empty('').default(() => valspec)
         } else {
           return Joi[typecheck]().default(() => valspec)
         }

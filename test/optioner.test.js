@@ -457,4 +457,23 @@ describe('optioner', function() {
       //'child "1" fails because [child "a" fails because ["a" must be one of [2]]]'
     )
   })
+
+
+  it('empty-string', async () => {
+    var opt0 = Optioner({
+      a: '',
+      b: 'x'
+    })
+
+    //console.dir(opt0.joi.describe(),{depth:null})
+
+    var res0 = opt0.check({a:'x'})
+    //console.log(res0)
+    expect(res0).equals({ a: 'x', b: 'x' })
+    
+    var res1 = opt0.check({a:''})
+    //console.log(res1)
+    expect(res1).equals({ a: '', b: 'x' })
+  })
+
 })

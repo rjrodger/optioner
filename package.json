@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/rjrodger/optioner",
   "dependencies": {
-    "@hapi/hoek": "^9.0.2",
+    "@hapi/hoek": "^9.0.3",
     "@hapi/joi": "^17.1.0"
   },
   "devDependencies": {

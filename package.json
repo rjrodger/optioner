@@ -29,14 +29,14 @@
   },
   "homepage": "https://github.com/rjrodger/optioner",
   "dependencies": {
-    "@hapi/hoek": "^9.0.3",
-    "@hapi/joi": "^17.1.0"
+    "@hapi/hoek": "^9.0.4",
+    "@hapi/joi": "^17.1.1"
   },
   "devDependencies": {
     "@hapi/code": "^8.0.1",
-    "@hapi/lab": "^22.0.3",
-    "coveralls": "^3.0.9",
-    "prettier": "^1.19.1"
+    "@hapi/lab": "^22.0.4",
+    "coveralls": "^3.1.0",
+    "prettier": "^2.0.5"
   },
   "files": [
     "README.md",

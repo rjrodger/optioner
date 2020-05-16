@@ -18,7 +18,7 @@ function make_optioner(spec, options) {
 
   var ctxt = { arrpaths: [] }
   var joispec = prepare_spec(spec, opts, ctxt)
-  var schema = Joi.compile(joispec)
+  var schema = Joi.compile(joispec, {legacy:true})
 
   function validate(input, done) {
     var work = Hoek.clone(input) || {}
